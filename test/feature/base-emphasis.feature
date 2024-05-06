@@ -16,6 +16,14 @@ Feature: Conversion of Emphasis markdown
   And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": "italic", "marks": [ { "type": "em" } ] }'
   And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": " using underscore" }'
 
+  Scenario: Base formatting - ignore underscore in word
+    Given the markdown in GITHUB is 'this sentence contains _ita_lic_ using underscore'
+    When we translate it in ADF
+    Then the ADF chunk at content path [ 0 ] has type 'paragraph'
+    And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": "this sentence contains " }'
+    And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": "ita_lic", "marks": [ { "type": "em" } ] }'
+    And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": " using underscore" }'
+
 
   Scenario: Base formatting - bold using star
   Given the markdown in GITHUB is 'this sentence contains **bold** using star'
@@ -76,7 +84,7 @@ Feature: Conversion of Emphasis markdown
   And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": "." }'
 
   Scenario: Base formatting - interwoven italic and bold work with underscore
-  Given the markdown in GITHUB is 'It's very easy to make some words _italic and also __bold__ with Markdown_.'
+  Given the markdown in GITHUB is 'It's very easy to make some words _italic and also __bold__ with Markdown_'
   When we translate it in ADF
   Then the ADF chunk at content path [ 0 ] has type 'paragraph'
   And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": "It's very easy to make some words " }'
@@ -97,7 +105,7 @@ Feature: Conversion of Emphasis markdown
   And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": "." }'
 
   Scenario: Base formatting - interwoven bold and italic work with underscore
-  Given the markdown in GITHUB is 'It's very easy to make some words __bold and also _italic_ with Markdown__.'
+  Given the markdown in GITHUB is 'It's very easy to make some words __bold and also _italic_ with Markdown__'
   When we translate it in ADF
   Then the ADF chunk at content path [ 0 ] has type 'paragraph'
   And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": "It's very easy to make some words " }'
@@ -108,7 +116,7 @@ Feature: Conversion of Emphasis markdown
 
 
   Scenario: Base formatting - multiple interwoven bold and italic work with underscore
-  Given the markdown in GITHUB is 'It's very __easy to make__ some words __bold and also _italic_ with__ _Markdown_.'
+  Given the markdown in GITHUB is 'It's very __easy to make__ some words __bold and also _italic_ with__ _Markdown_'
   When we translate it in ADF
   Then the ADF chunk at content path [ 0 ] has type 'paragraph'
   And the ADF chunk at content path [ 0 ] contains '{ "type": "text", "text": "It's very " }'

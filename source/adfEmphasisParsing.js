@@ -31,7 +31,7 @@ function attachTextToNodeSliceEmphasis( parentNode, textToEmphasis ){
 	let expressionBuffer		= ''
 	for( const currentCharacterIndex in lineUnderscored ){
 		
-		if( lineUnderscored[ currentCharacterIndex ] !== '_' ){
+		if( lineUnderscored[ currentCharacterIndex ] !== '_' || characterIsInWord(currentCharacterIndex, lineUnderscored)){
 			expressionBuffer += lineUnderscored[ currentCharacterIndex ]
 			
 			if( potentialUnderscorePair ){
@@ -52,9 +52,9 @@ function attachTextToNodeSliceEmphasis( parentNode, textToEmphasis ){
 			expressionBuffer = ''
 			strikedThrough = !strikedThrough
 		}
-		
-		
-		if( lineUnderscored[ currentCharacterIndex ] === '_' ){
+
+
+		if( lineUnderscored[ currentCharacterIndex ] === '_' && !characterIsInWord(currentCharacterIndex, lineUnderscored)){
 			let decorationToUse = convertDecorationLevelToMark( currentDecorationLevel, strikedThrough )
 			
 			if( expressionBuffer !== '' ){
@@ -107,6 +107,32 @@ function convertDecorationLevelToMark( decorationLevelToConvert, addStrikethroug
 			 : decorationLevelToConvert === 3
 			   ? marks().strong().em()
 			   : null
+}
+
+/**
+ * Check if the current character position is inside a word or not
+ *
+ * @param {string|Number} currentCharacterIndex
+ * @param {string} lineUnderscored
+ * @returns {boolean}
+ */
+function characterIsInWord(currentCharacterIndex, lineUnderscored) {
+	const index = parseInt(currentCharacterIndex);
+	const characterPrev = lineUnderscored[index - 1];
+	const characterNext = lineUnderscored[index + 1];
+
+	// no previous or next character exists: not inside a word
+	if (!characterPrev || !characterNext) {
+		return false;
+	}
+
+	// previous or next character is whitespace or another formatting character: not inside a word
+	const nonWordChars = /[\s*~_]/;
+	if (characterPrev.match(nonWordChars) || characterNext.match(nonWordChars)) {
+		return false;
+	}
+
+	return true;
 }
 
 module.exports = attachTextToNodeSliceEmphasis
