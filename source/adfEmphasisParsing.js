@@ -5,7 +5,7 @@
  *  @author bruno.morel@b-yond.com
  * ---------------------------------------------------------------------------------------------------------------------
  *
- * This transform a text with emphasis mark (*, _ or `) into an ADF expanded Paragraph
+ * This transform a text with emphasis mark (* or `) into an ADF expanded Paragraph
  *
  **********************************************************************************************************************/
 const { marks, Text }	= require( 'adf-builder' )
@@ -18,7 +18,6 @@ const { marks, Text }	= require( 'adf-builder' )
  * @param textToEmphasis		{String}	text to parse for emphasis parsing
  */
 function attachTextToNodeSliceEmphasis( parentNode, textToEmphasis ){
-	const lineUnderscored = textToEmphasis.replace( /\*/g, '_' )
 	let currentDecorationLevel = 0
 	//see convertDecorationLevelToMark
 	// 0 => no decoration
@@ -29,10 +28,10 @@ function attachTextToNodeSliceEmphasis( parentNode, textToEmphasis ){
 	let potentialUnderscorePair = false
 	let strikedThrough			= false
 	let expressionBuffer		= ''
-	for( const currentCharacterIndex in lineUnderscored ){
+	for( const currentCharacterIndex in textToEmphasis ){
 		
-		if( lineUnderscored[ currentCharacterIndex ] !== '_' ){
-			expressionBuffer += lineUnderscored[ currentCharacterIndex ]
+		if( textToEmphasis[ currentCharacterIndex ] !== '*' ){
+			expressionBuffer += textToEmphasis[ currentCharacterIndex ]
 			
 			if( potentialUnderscorePair ){
 				currentDecorationLevel = currentDecorationLevel === 0 || currentDecorationLevel === 2
@@ -43,8 +42,8 @@ function attachTextToNodeSliceEmphasis( parentNode, textToEmphasis ){
 		}
 		
 		if( currentCharacterIndex > 0
-			&& lineUnderscored[ currentCharacterIndex ] === '~'
-			&& lineUnderscored[ currentCharacterIndex - 1 ] === '~' ){
+			&& textToEmphasis[ currentCharacterIndex ] === '~'
+			&& textToEmphasis[ currentCharacterIndex - 1 ] === '~' ){
 			const textNode = new Text( expressionBuffer.slice( 0, expressionBuffer.length - 2 ),
 									   convertDecorationLevelToMark( currentDecorationLevel, strikedThrough ) )
 			parentNode.content.add( textNode )
@@ -54,7 +53,7 @@ function attachTextToNodeSliceEmphasis( parentNode, textToEmphasis ){
 		}
 		
 		
-		if( lineUnderscored[ currentCharacterIndex ] === '_' ){
+		if( textToEmphasis[ currentCharacterIndex ] === '*' ){
 			let decorationToUse = convertDecorationLevelToMark( currentDecorationLevel, strikedThrough )
 			
 			if( expressionBuffer !== '' ){
